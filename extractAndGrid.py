@@ -19,6 +19,7 @@ image_files.sort()  # Sort the filenames to ensure a consistent order
 # Extract columns for image paths and labels
 image_paths = df['image_path'].tolist()  # Update 'image_path' based on the column name in df
 true_labels = df['Smiling'].values()  # Update 'label' based on the column name in df
+true_labels = np.where(true_labels == -1, 0, true_labels)
 
 # Define the target blendshapes
 target_blendshapes = [
@@ -70,7 +71,7 @@ blendshapes_df = pd.DataFrame(blendshapes_array)
 
 # Prepare data for GridSearch
 X = blendshapes_array
-y = true_labels #1 for smile, -1 otherwise
+y = true_labels # 1 for smile , 0 otherwise
 
 # Define a scorer function
 def threshold_classifier(X, thresholds):
