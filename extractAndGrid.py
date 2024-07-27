@@ -1,5 +1,6 @@
 import pandas as pd
 import cv2
+import os
 import numpy as np
 from mediapipe.tasks import python
 from mediapipe.tasks.python import vision
@@ -10,9 +11,14 @@ from sklearn.metrics import make_scorer, f1_score
 dataset_path = 'dataset.csv'  # Update with the dataset path
 df = pd.read_csv(dataset_path)
 
+folder_path = 'C:\Users\jolee\OneDrive\Desktop\שנה ג\סמסטר ב\workshop\codingWithMP\grid_search\img_align_celeba'
+image_files = [f for f in os.listdir(folder_path) if os.path.isfile(os.path.join(folder_path, f))]
+image_files.sort()  # Sort the filenames to ensure a consistent order
+
+
 # Extract columns for image paths and labels
 image_paths = df['image_path'].tolist()  # Update 'image_path' based on the column name in df
-true_labels = df['label'].tolist()  # Update 'label' based on the column name in df
+true_labels = df['label'].values()  # Update 'label' based on the column name in df
 
 # Define the target blendshapes
 target_blendshapes = [
@@ -44,7 +50,8 @@ def extract_blendshapes(image):
 # Process each image in the dataset
 all_blendshapes_data = []
 
-for image_path in image_paths:
+for image_file in image_files:
+    image_path = os.path.join(folder_path, image_file)
     image = cv2.imread(image_path)
     blendshapes = extract_blendshapes(image)
     
@@ -63,7 +70,7 @@ blendshapes_df = pd.DataFrame(blendshapes_array)
 
 # Prepare data for GridSearch
 X = blendshapes_array
-y = np.array(true_labels)
+y = true_labels
 
 # Define a scorer function
 def threshold_classifier(X, thresholds):
