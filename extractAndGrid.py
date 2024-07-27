@@ -8,7 +8,7 @@ from sklearn.model_selection import GridSearchCV
 from sklearn.metrics import make_scorer, f1_score
 
 # Load the dataset
-dataset_path = 'dataset.csv'  # Update with the dataset path
+dataset_path = 'list_attr_celeba.csv'  # Update with the dataset path
 df = pd.read_csv(dataset_path)
 
 folder_path = 'C:\Users\jolee\OneDrive\Desktop\שנה ג\סמסטר ב\workshop\codingWithMP\grid_search\img_align_celeba'
@@ -18,7 +18,7 @@ image_files.sort()  # Sort the filenames to ensure a consistent order
 
 # Extract columns for image paths and labels
 image_paths = df['image_path'].tolist()  # Update 'image_path' based on the column name in df
-true_labels = df['label'].values()  # Update 'label' based on the column name in df
+true_labels = df['Smiling'].values()  # Update 'label' based on the column name in df
 
 # Define the target blendshapes
 target_blendshapes = [
@@ -70,7 +70,7 @@ blendshapes_df = pd.DataFrame(blendshapes_array)
 
 # Prepare data for GridSearch
 X = blendshapes_array
-y = true_labels
+y = true_labels #1 for smile, -1 otherwise
 
 # Define a scorer function
 def threshold_classifier(X, thresholds):
