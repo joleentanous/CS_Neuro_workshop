@@ -18,10 +18,10 @@ failed_indices = []
 # Load the dataset
 dataset_path = 'C:/Users/jolee/OneDrive/Desktop/שנה ג/סמסטר ב/workshop/codingWithMP/grid_search/list_attr_celeba.csv'  # Update with the dataset path
 df = pd.read_csv(dataset_path)
-df = df.head(500)
-display(df)
+df = df.head(50)
+# display(df)
 
-folder_path = 'C:/Users/jolee/OneDrive/Desktop/שנה ג/סמסטר ב/workshop/codingWithMP/grid_search/train_images/only500'
+folder_path = 'C:/Users/jolee/OneDrive/Desktop/שנה ג/סמסטר ב/workshop/codingWithMP/grid_search/train_images/only50'
 image_files = [f for f in os.listdir(folder_path) if os.path.isfile(os.path.join(folder_path, f))]
 image_files.sort()  # Sort the filenames to ensure a consistent order
 # print(f"Total images found: {len(image_files)}")
@@ -29,13 +29,14 @@ image_files.sort()  # Sort the filenames to ensure a consistent order
 
 
 # Define the target blendshapes
+# in the right order
 target_blendshapes = [
-    'mouthSmileLeft',
-    'mouthSmileRight',
-    'mouthPressLeft',
-    'mouthPressRight',
-    'eyeSquintLeft',
-    'eyeSquintRight'
+    'eyeSquintLeft', #0.5
+    'eyeSquintRight', #0.5
+    'mouthPressLeft', #0.03
+    'mouthPressRight', #0.03
+    'mouthSmileLeft', #0.3
+    'mouthSmileRight' #0.3
 ]
 
 # Initialize the custom FaceLandmarker with the custom model
@@ -78,7 +79,7 @@ for image_file in image_files:
         all_blendshapes_data.append(blendshapes)
     else:
         count += 1
-        print(img_num)
+        # print(img_num)
         failed_indices.append(img_num)
 print(count)
 df = df.drop(failed_indices).reset_index(drop=True)
@@ -94,8 +95,8 @@ print(f"Blendshapes array shape: {blendshapes_array.shape}")
 if blendshapes_array.size == 0:
     print("No blendshapes data extracted.")
 
-# Convert the blendshapes array to a DataFrame
-blendshapes_df = pd.DataFrame(blendshapes_array)
+# # Convert the blendshapes array to a DataFrame
+# blendshapes_df = pd.DataFrame(blendshapes_array)
 
 
 # Extract columns for image paths and labels
@@ -104,6 +105,7 @@ true_labels = df['Smiling'].values  # Update 'label' based on the column name in
 true_labels = np.where(true_labels == -1, 0, true_labels)
 
 
+# could be in a separate file
 # Prepare data for GridSearch
 X = blendshapes_array
 y = true_labels
@@ -124,31 +126,25 @@ class ThresholdClassifier(BaseEstimator, ClassifierMixin):
         return np.all(X > self.thresholds, axis=1).astype(int)
 
 
-# # Define a scorer function for GridSearchCV
-# def f1_scorer(estimator, X, y):
-#     y_pred = threshold_classifier(X, estimator['thresholds'])
-#     return f1_score(y, y_pred)
-
-
-# def f1_scorer(estimator, X, y):
-#     y_pred = estimator.predict(X)
-#     return f1_score(y, y_pred)
-
-def f1_scorer(y_true, y_pred):
-    return f1_score(y_true, y_pred)
-
 # Define parameter grid
 param_grid = {
-    'thresholds': [np.full(X.shape[1], t) for t in np.arange(0, 1, 0.01)]
+    'thresholds': [[t1, t2, t3, t4, t5, t6] 
+                   for t1 in np.arange(0.3, 1.1, 0.1)
+                   for t2 in np.arange(0.3, 1.1, 0.1)
+                   for t3 in np.arange(0, 0.2, 0.01)
+                   for t4 in np.arange(0, 0.2, 0.01)
+                   for t5 in np.arange(0.2, 0.6, 0.1)
+                   for t6 in np.arange(0.2, 0.6, 0.1)]
 }
 
 # Perform grid search
 grid_search = GridSearchCV(
     estimator=ThresholdClassifier(),# estimator={'thresholds': None}
     param_grid=param_grid,
-    scoring=make_scorer(f1_scorer),
+    scoring=make_scorer(f1_score),
     cv=5,
-    refit=True
+    refit=True,
+    n_jobs=-1
 )
 grid_search.fit(X, y)
 
@@ -158,3 +154,6 @@ best_score = grid_search.best_score_
 
 print("Best Parameters:", best_params)
 print("Best F1 Score:", best_score)
+
+
+
