@@ -8,17 +8,19 @@ from sklearn.model_selection import GridSearchCV
 from sklearn.metrics import make_scorer, f1_score
 
 # Load the dataset
-dataset_path = 'list_attr_celeba.csv'  # Update with the dataset path
+dataset_path = 'C:/Users/jolee/OneDrive/Desktop/שנה ג/סמסטר ב/workshop/codingWithMP/grid_search/list_attr_celeba.csv'  # Update with the dataset path
 df = pd.read_csv(dataset_path)
 
-folder_path = 'C:\Users\jolee\OneDrive\Desktop\שנה ג\סמסטר ב\workshop\codingWithMP\grid_search\img_align_celeba'
+folder_path = 'C:/Users/jolee/OneDrive/Desktop/שנה ג/סמסטר ב/workshop/codingWithMP/grid_search/train_images/img_align_celeba'
 image_files = [f for f in os.listdir(folder_path) if os.path.isfile(os.path.join(folder_path, f))]
 image_files.sort()  # Sort the filenames to ensure a consistent order
+print(f"Total images found: {len(image_files)}")
+print("First few image filenames:", image_files[:10])
 
 
 # Extract columns for image paths and labels
-image_paths = df['image_path'].tolist()  # Update 'image_path' based on the column name in df
-true_labels = df['Smiling'].values()  # Update 'label' based on the column name in df
+
+true_labels = df['Smiling'].values  # Update 'label' based on the column name in df
 true_labels = np.where(true_labels == -1, 0, true_labels)
 
 # Define the target blendshapes
@@ -41,37 +43,54 @@ detector = vision.FaceLandmarker.create_from_options(options)
 
 # Function to extract blendshapes
 def extract_blendshapes(image):
-    results = detector.detect(image)
-    if results.multi_face_landmarks:
+    mp_image = vision.Image(image_format=vision.ImageFormat.SRGB, data=image)
+    results = detector.detect(mp_image)
+    if results.face_landmarks:
         # Extract blendshape values
         blendshape_values = [blendshape.score for blendshape in results.multi_face_blendshapes[0] if blendshape.category_name in target_blendshapes]
+        print(blendshape_values)
         return blendshape_values
     return None
 
 # Process each image in the dataset
 all_blendshapes_data = []
 
+print(len(image_files))
 for image_file in image_files:
+    print("-------------------------------------------")
     image_path = os.path.join(folder_path, image_file)
     image = cv2.imread(image_path)
+    if image is None:
+        print(f"Failed to load image: {image_path}")
+        continue
+    cv2.imshow('Image', image)
+    cv2.waitKey(500)  # Display each image for 500 ms
     blendshapes = extract_blendshapes(image)
     
     if blendshapes is not None:
+        print(blendshapes)
         all_blendshapes_data.append(blendshapes)
 
 # Convert all blendshapes data to a NumPy array
 blendshapes_array = np.array(all_blendshapes_data)
+# print(blendshapes_array)
+
+
+
+print(f"Blendshapes array shape: {blendshapes_array.shape}")
+
+# Check if blendshapes_array is empty
+if blendshapes_array.size == 0:
+    print("No blendshapes data extracted.")
 
 # Convert the blendshapes array to a DataFrame
 blendshapes_df = pd.DataFrame(blendshapes_array)
 
-# # Save the DataFrame to a CSV file (optional)
-# csv_filename = 'blendshapes_data.csv'
-# blendshapes_df.to_csv(csv_filename, index=False)
+
 
 # Prepare data for GridSearch
 X = blendshapes_array
-y = true_labels # 1 for smile , 0 otherwise
+y = true_labels
 
 # Define a scorer function
 def threshold_classifier(X, thresholds):
