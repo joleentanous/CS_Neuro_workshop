@@ -6,7 +6,7 @@ https://docs.google.com/document/d/1fOdxSnMz_m_EC0rMcg6iA6Qe2_hR3lgJygnGYv1kWdo/
 **extractAndGrid.py:**
 This code is designed to perform a grid search to find the optimal threshold values for a custom classifier that uses MediaPipe blendshape scores to predict whether a person is smiling in an image. Here is an overview of what the code does and the expected results:
 
-Code Overview
+**Code Overview**
 Import Libraries:
 
 Imports necessary libraries such as pandas, os, PIL, MediaPipe, numpy, sklearn, etc.
