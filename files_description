@@ -12,5 +12,11 @@
   Both DataFrames are then saved as Excel files in the specified folder, with filenames indicating the participant name.
   *Make sure to update the paths (video_path and excel_folder) to match the directories on your computer before running the script.
 
-3.Randomized_Grid_Search_threshold:
+3.face_landmarker_v2_with_blendshapes.task:
+  the task file is configured to output facial blendshapes,
+  which are specific facial expressions or movements like smiling, blinking, etc.
+  The file controls how these blendshapes are detected and what thresholds or parameters should be applied.
+
+
+4.Randomized_Grid_Search_threshold:
   
