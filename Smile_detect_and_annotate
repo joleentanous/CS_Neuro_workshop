@@ -38,12 +38,12 @@ def process_video(participant_name):
 
     # Smile detection thresholds
     smile_thresholds = {
-        'mouthSmileLeft': 0.3,  # Lowered from 0.5
-        'mouthSmileRight': 0.3, # Lowered from 0.5
-        'mouthPressLeft': 0.02, # Lowered from 0.03
-        'mouthPressRight': 0.02,# Lowered from 0.03
-        'eyeSquintLeft': 0.2,   # Lowered from 0.3
-        'eyeSquintRight': 0.2   # Lowered from 0.3
+        'mouthSmileLeft': 0.36315783269948043,
+        'mouthSmileRight': 0.4324113565116444,
+        'mouthPressLeft': 0.0017642588948572435,
+        'mouthPressRight': 0.01247548061576947,
+        'eyeSquintLeft': 0.2137247813732795,
+        'eyeSquintRight': 0.20704765056839897
     }
 
     # Process the video
