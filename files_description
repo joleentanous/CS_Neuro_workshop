@@ -1,1 +1,16 @@
-h
+1.Smile_detect_and_annotate: 
+  for each video frame (image):
+    -visualizes facial landmarks on the image (468 - all of them)
+    -displays it
+    -accumulates and stores the blendshapes' values in an Excel file.
+  *Make sure to update the paths to match the directories on your computer before running the script.
+
+2.Smiles_seconds_and_frames:
+  for each video frame (image):
+    -Stores the frame number and whether a smile was detected in that frame.
+    -Stores the second and whether a smile was detected in that second.
+  Both DataFrames are then saved as Excel files in the specified folder, with filenames indicating the participant name.
+  *Make sure to update the paths (video_path and excel_folder) to match the directories on your computer before running the script.
+
+3.Randomized_Grid_Search_threshold:
+  
