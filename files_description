@@ -19,4 +19,9 @@
 
 
 4.Randomized_Grid_Search_threshold:
+
+5.extractAndGrid:
+This code is designed to perform a grid search to find the optimal threshold values 
+for a custom classifier that uses MediaPipe blendshape scores to predict whether a person 
+is smiling in an image. 
   
